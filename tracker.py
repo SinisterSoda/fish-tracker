@@ -336,9 +336,16 @@ class FishTrackerApp:
 
     def sort_column(self, col):
         if col in self.sort_order:
+            k = "name"
+            if col == "Fish":
+                k = "name"
+            elif col == "Count":
+                k = "count"
+
             self.sort_order[col] = not self.sort_order[col]
             ascending = self.sort_order[col]
-            self.fish_data.sort(key=lambda x: (x[col.lower()] if col != "Percentage" else x['count']/sum(item['count'] for item in self.fish_data)), 
+            s = sum(item['count'] for item in self.fish_data)
+            self.fish_data.sort(key=lambda x: (x[k] if col != "Percentage" else x['count']/s), 
                                 reverse=not ascending)
             self.update_tree()  # Refresh the tree view with sorted data
 
