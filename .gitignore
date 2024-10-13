@@ -7,6 +7,9 @@ venv/
 ENV/
 env/
 
+#sessions save folder
+sessions/
+
 # PyInstaller files
 build/
 dist/
