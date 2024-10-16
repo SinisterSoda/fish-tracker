@@ -52,9 +52,14 @@ class rootView:
         self.fish_name_entry.grid(row=4, column=0, sticky="w", padx=(5, 0))
 
         # Fish Count Entry
-        tk.Label(input_frame, text="Count").grid(row=3, column=1, sticky="w", padx=(5, 0), pady=(5, 0))
-        self.fish_count_entry = tk.Entry(input_frame, width=10)
-        self.fish_count_entry.grid(row=4, column=1, sticky="w", padx=(5, 0), pady=(5, 0))
+        tk.Label(input_frame, text="Count").grid(row=3, column=1, padx=(5, 0), pady=(5, 0))
+        self.fish_count_entry = tk.Entry(input_frame, width=5)
+        self.fish_count_entry.grid(row=4, column=1, padx=(5, 0), pady=(5, 0))
+        
+        # Missed Count Entry
+        tk.Label(input_frame, text="Missed").grid(row=3, column=2, padx=(5, 0), pady=(5, 0))
+        self.missed_count_entry = tk.Entry(input_frame, width=5)
+        self.missed_count_entry.grid(row=4, column=2, padx=(5, 0), pady=(5, 0))
 
         # Add Fish Button
         add_button = tk.Button(input_frame, text="Add Fish", command=self.add_fish)
@@ -112,6 +117,7 @@ class rootView:
     def clear_inputs(self):
         self.fish_name_entry.delete(0, tk.END)
         self.fish_count_entry.delete(0, tk.END)
+        self.missed_count_entry.delete(0, tk.END)  # Clear missed entry
         self.water_type_var.set(self.water_type)
         self.bait_type_var.set(self.bait_type)
         self.fish_name_entry.focus()
@@ -120,6 +126,8 @@ class rootView:
         return self.fish_name_entry.get()
     def get_fish_count(self):
         return self.fish_count_entry.get()
+    def get_missed_count(self):
+        return self.missed_count_entry.get()  # New method for missed count
     def get_water_type(self):
         return self.water_type_var.get()
     def get_bait_type(self):

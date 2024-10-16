@@ -18,6 +18,9 @@ dist/
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
+#old tracker
+tracker_old.py
+
 # IDE-specific files (add or remove as needed)
 .vscode/
 .idea/

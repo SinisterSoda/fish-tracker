@@ -32,7 +32,15 @@ class sessionModel:
         self.water_type = "Unspecified/Mixed"
         self.bait_type = "Unspecified/Mixed"
         
+    def fish_index(self, fish_name):
+        for index, fish in enumerate(self.fish_data):
+            if fish['name'].lower() == fish_name.lower():  # Case insensitive comparison
+                return index
+        return -1  # Return -1 if the fish is not found
+        
     def add_fish(self, fish):
+        if 'missed' not in fish:
+            fish['missed'] = 0
         self.fish_data.append(fish)
         
     def update_at(self, index, f):
@@ -52,8 +60,13 @@ class sessionModel:
     def load_file(file_path):
         with open(file_path, 'r') as f:
             session_data = json.load(f)
-            
+        
+          
         wt = session_data.get("water_type", "Unspecified/Mixed")
         bt = session_data.get("bait_type", "Unspecified/Mixed")
         fd = session_data.get("fish_data", [])
+        # Ensure each fish has a 'missed' value
+        for fish in fd:
+            if 'missed' not in fish:
+                fish['missed'] = 0  
         return sessionModel(fd, wt, bt)

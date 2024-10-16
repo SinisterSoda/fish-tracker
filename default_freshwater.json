@@ -1,0 +1,36 @@
+{
+    "water_type": "Fresh Water",
+    "bait_type": "Bait Paste",
+    "fish_data": [
+        {
+            "name": "Arowana",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Belphoret Bass",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Fosine Barracuda",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Large Sack",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Largemouth Bass",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Small Sack",
+            "count": 0,
+            "missed": 0
+        }
+    ]
+}

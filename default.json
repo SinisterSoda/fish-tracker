@@ -2,48 +2,220 @@
     "water_type": "Unspecified/Mixed",
     "bait_type": "Unspecified/Mixed",
     "fish_data": [
-        {"name": "Amberjack", "count": 0},
-        {"name": "Arowana", "count": 0},
-        {"name": "Aurora Starfish", "count": 0},
-        {"name": "Ballan Wrasse", "count": 0},
-        {"name": "Banded Butterflyfish", "count": 0},
-        {"name": "Barracuda", "count": 0},
-        {"name": "Belphoret Bass", "count": 0},
-        {"name": "Black Bream", "count": 0},
-        {"name": "Blacktail Snook", "count": 0},
-        {"name": "Blacktip Shark", "count": 0},
-        {"name": "Blue Filefish", "count": 0},
-        {"name": "Bluegill", "count": 0},
-        {"name": "Discus", "count": 0},
-        {"name": "Dolly Varden Trout", "count": 0},
-        {"name": "Flathead Gray Mullet", "count": 0},
-        {"name": "Fonsiné Barracuda", "count": 0},
-        {"name": "Heliber Goldfish", "count": 0},
-        {"name": "Horse Mackerel", "count": 0},
-        {"name": "Imp Catalupa", "count": 0},
-        {"name": "Kahawai", "count": 0},
-        {"name": "Lanquis Barracuda", "count": 0},
-        {"name": "Lanquis Bass", "count": 0},
-        {"name": "Lanquis Carp", "count": 0},
-        {"name": "Largemouth Bass", "count": 0},
-        {"name": "Luderick", "count": 0},
-        {"name": "Mackerel", "count": 0},
-        {"name": "Mahi Mahi", "count": 0},
-        {"name": "Mantis Shrimp", "count": 0},
-        {"name": "Pajama Cardinalfish", "count": 0},
-        {"name": "Peacock Bass", "count": 0},
-        {"name": "Pennant Coralfish", "count": 0},
-        {"name": "Pink Cod", "count": 0},
-        {"name": "Rainbow Ray-Finned Fish", "count": 0},
-        {"name": "Red Salmon", "count": 0},
-        {"name": "Silver Anchovy", "count": 0},
-        {"name": "Skipjack Tuna", "count": 0},
-        {"name": "Small-Mouthed Rockfish", "count": 0},
-        {"name": "Solisium Carp", "count": 0},
-        {"name": "Squid", "count": 0},
-        {"name": "Striped Mackerel", "count": 0},
-        {"name": "Stripped Crimson Seabream", "count": 0},
-        {"name": "Sunspot Rockfish", "count": 0},
-        {"name": "Taion Moray Eel", "count": 0}
+        {
+            "name": "Amberjack",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Arowana",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Aurora Starfish",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Ballan Wrasse",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Banded Butterflyfish",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Barracuda",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Belphoret Bass",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Black Bream",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Blacktail Snook",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Blacktip Shark",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Blue Filefish",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Bluegill",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Discus",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Dolly Varden Trout",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Flathead Gray Mullet",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Fonsin\u00c3\u00a9 Barracuda",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Heliber Goldfish",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Horse Mackerel",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Imp Catalupa",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Kahawai",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Lanquis Barracuda",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Lanquis Bass",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Lanquis Carp",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Largemouth Bass",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Luderick",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Mackerel",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Mahi Mahi",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Mantis Shrimp",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Pajama Cardinalfish",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Peacock Bass",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Pennant Coralfish",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Pink Cod",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Rainbow Ray-Finned Fish",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Red Salmon",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Silver Anchovy",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Skipjack Tuna",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Small-Mouthed Rockfish",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Solisium Carp",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Squid",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Striped Mackerel",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Stripped Crimson Seabream",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Sunspot Rockfish",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Taion Moray Eel",
+            "count": 0,
+            "missed": 0
+        }
     ]
 }

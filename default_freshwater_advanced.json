@@ -1,0 +1,61 @@
+{
+    "water_type": "Fresh Water",
+    "bait_type": "Bait Paste",
+    "fish_data": [
+        {
+            "name": "Small Sack",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Lanquis Barracuda",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Fosine Barracuda",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Large Sack",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Largemouth Bass",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Small Sack",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Lanquis Barracuda",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Solisium Carp",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Dolly Varden Trout",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Imp Catalupa",
+            "count": 0,
+            "missed": 0
+        },
+        {
+            "name": "Pajama Cardinal Fish",
+            "count": 0,
+            "missed": 0
+        }
+    ]
+}

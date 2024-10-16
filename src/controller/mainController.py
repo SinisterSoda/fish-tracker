@@ -52,8 +52,13 @@ class MainController:
         fish_name = self.rootView.get_fish_name().strip()
         try:
             fish_count = int(self.rootView.get_fish_count().strip())
+            missed_count = int(self.rootView.get_missed_count().strip())  # Get missed count
             if fish_name and fish_count >= 0:
-                self.session_data.add_fish({"name": fish_name, "count": fish_count})
+                self.session_data.add_fish({
+                    "name": fish_name,
+                    "count": fish_count,
+                    "missed": missed_count
+                })
                 self.rootView.update_data(self.session_data)
                 #self.update_tree(self.session_data)  # Update the tree view
                 self.clear_inputs()
@@ -126,11 +131,13 @@ class MainController:
         for fish in fish_data:
             name = fish['name']
             count = fish['count']
+            missed = fish.get('missed', 0)
             if name in fish_count_dict:
-                fish_count_dict[name] += count
+                fish_count_dict[name]['count'] += count
+                fish_count_dict[name]['missed'] += missed  # Aggregate missed counts
             else:
-                fish_count_dict[name] = count
-        return [{"name": name, "count": count} for name, count in fish_count_dict.items()]
+                fish_count_dict[name] = {'name': name, 'count': count, 'missed': missed}
+        return [{'name': fish['name'], 'count': fish['count'], 'missed': fish['missed']} for fish in fish_count_dict.values()]
     
     def edit_fish(self, event):
         selected_item = self.rootView.table.selection()
@@ -138,7 +145,7 @@ class MainController:
             return
 
         item = self.rootView.table.item(selected_item)
-        fish_name, fish_count = item['values'][:2]
+        fish_name, fish_count, _, missed_count = item['values'][:4]
 
         # Create edit pop-up
         edit_window = tk.Toplevel(self.rootView.root)
@@ -154,24 +161,37 @@ class MainController:
         fish_count_entry = tk.Entry(edit_window, width=10)
         fish_count_entry.grid(row=1, column=1, padx=5, pady=5)
         fish_count_entry.insert(0, fish_count)
+        
+        # New Entry for Missed Count
+        tk.Label(edit_window, text="Missed").grid(row=2, column=0, padx=5, pady=5, sticky="w")
+        missed_count_entry = tk.Entry(edit_window, width=10)
+        missed_count_entry.grid(row=2, column=1, padx=5, pady=5)
+        missed_count_entry.insert(0, missed_count)  # Set the current missed count
 
         def save_changes():
             new_fish_name = fish_name_entry.get().strip()
             try:
                 new_fish_count = int(fish_count_entry.get().strip())
-                if new_fish_name and new_fish_count >= 0:
-                    index = self.rootView.table.index(selected_item)
+                new_missed_count = int(missed_count_entry.get().strip())  # Get new missed count
+                if new_fish_name and new_fish_count >= 0 and new_missed_count >= 0:
+                    #index = self.rootView.table.index(selected_item)
+                    index = self.session_data.fish_index(fish_name)
+                    
                     #self.fish_data[index] = {"name": new_fish_name, "count": new_fish_count}
-                    self.session_data.update_at(index, {"name": new_fish_name, "count": new_fish_count})
+                    self.session_data.update_at(index, {
+                        "name": new_fish_name, 
+                        "count": new_fish_count,
+                        "missed": new_missed_count
+                    })
                     self.rootView.update_data(self.session_data)
                     edit_window.destroy()
                 else:
                     messagebox.showwarning("Input Error", "Please enter a valid fish name and count.")
             except ValueError:
-                messagebox.showwarning("Input Error", "Count must be a valid integer.")
+                messagebox.showwarning("Input Error", "Count and missed must be a valid integer.")
 
         save_button = tk.Button(edit_window, text="Save Changes", command=save_changes)
-        save_button.grid(row=2, column=0, columnspan=2, pady=10)
+        save_button.grid(row=3, column=0, columnspan=2, pady=10)
         
         
     def compare_sessions(self):
