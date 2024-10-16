@@ -49,9 +49,9 @@ class MainController:
         self.rootView.update_data(self.session_data)  # Refresh the tree view
 
     def add_fish(self):#needs fixing
-        fish_name = self.fish_name_entry.get().strip()
+        fish_name = self.rootView.get_fish_name().strip()
         try:
-            fish_count = int(self.fish_count_entry.get().strip())
+            fish_count = int(self.rootView.get_fish_count().strip())
             if fish_name and fish_count >= 0:
                 self.session_data.add_fish({"name": fish_name, "count": fish_count})
                 self.rootView.update_data(self.session_data)
