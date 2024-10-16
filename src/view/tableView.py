@@ -57,5 +57,8 @@ class tableView:
     def selection(self):
         return self.tree.selection()
     
-    def index(self, index):
-        return self.tree.index(index)
+    def item(self, index):
+        return self.tree.item(index)
+    
+    def index(self, value):
+        return self.tree.index(value)

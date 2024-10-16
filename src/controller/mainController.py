@@ -27,6 +27,8 @@ class MainController:
         self.rootView.bind_menu("combine", self.combine_sessions)
         self.rootView.bind_menu("compare", self.compare_sessions)
         
+        self.rootView.table.bind("<Double-1>", self.edit_fish)
+        
     
         self.ensure_sessions_folder()
         self.rootView.mainloop()
@@ -131,11 +133,11 @@ class MainController:
         return [{"name": name, "count": count} for name, count in fish_count_dict.items()]
     
     def edit_fish(self, event):
-        selected_item = self.rootView.tableView.selection()
+        selected_item = self.rootView.table.selection()
         if not selected_item:
             return
 
-        item = self.rootView.tableView.item(selected_item)
+        item = self.rootView.table.item(selected_item)
         fish_name, fish_count = item['values'][:2]
 
         # Create edit pop-up
@@ -158,7 +160,7 @@ class MainController:
             try:
                 new_fish_count = int(fish_count_entry.get().strip())
                 if new_fish_name and new_fish_count >= 0:
-                    index = self.rootView.tableView.index(selected_item)
+                    index = self.rootView.table.index(selected_item)
                     #self.fish_data[index] = {"name": new_fish_name, "count": new_fish_count}
                     self.session_data.update_at(index, {"name": new_fish_name, "count": new_fish_count})
                     self.rootView.update_data(self.session_data)
