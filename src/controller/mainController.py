@@ -175,7 +175,7 @@ class MainController:
         def save_changes():
             new_fish_name = fish_name_entry.get().strip()
             index_check = self.session_data.fish_index(new_fish_name)
-            if index_check >= 0:
+            if index_check >= 0 and fish_name != new_fish_name:
                 messagebox.showwarning("Invalid Name", "You cannot reuse a name that already exists")
                 return
             try:
