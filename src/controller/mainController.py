@@ -50,10 +50,14 @@ class MainController:
 
     def add_fish(self):#needs fixing
         fish_name = self.rootView.get_fish_name().strip()
+        index_check = self.session_data.fish_index(fish_name)
+        if index_check >= 0:
+            messagebox.showwarning("Invalid Name", "You cannot reuse a name that already exists")
+            return
         try:
             fish_count = int(self.rootView.get_fish_count().strip())
             missed_count = int(self.rootView.get_missed_count().strip())  # Get missed count
-            if fish_name and fish_count >= 0:
+            if fish_name and fish_count >= 0 and fish_count >= 0:
                 self.session_data.add_fish({
                     "name": fish_name,
                     "count": fish_count,
@@ -65,7 +69,7 @@ class MainController:
             else:
                 messagebox.showwarning("Input Error", "Please enter a valid fish name and count.")
         except ValueError:
-            messagebox.showwarning("Input Error", "Count must be a valid integer.")
+            messagebox.showwarning("Input Error", "Count and missed must be a valid integer.")
             
     
              
@@ -170,6 +174,10 @@ class MainController:
 
         def save_changes():
             new_fish_name = fish_name_entry.get().strip()
+            index_check = self.session_data.fish_index(new_fish_name)
+            if index_check >= 0:
+                messagebox.showwarning("Invalid Name", "You cannot reuse a name that already exists")
+                return
             try:
                 new_fish_count = int(fish_count_entry.get().strip())
                 new_missed_count = int(missed_count_entry.get().strip())  # Get new missed count
