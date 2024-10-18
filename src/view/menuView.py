@@ -10,7 +10,7 @@ class menuView:
         self._save_session = None
         self._load_session = None
         self._combine_sessions = None
-
+        self._graph_current_session = None
         # File menu
         file_menu = tk.Menu(menu_bar, tearoff=0)
         file_menu.add_command(label="New Session", command=self.new_session)
@@ -27,6 +27,11 @@ class menuView:
         compare_menu.add_command(label="Compare Sessions", command=self.compare_sessions)
         menu_bar.add_cascade(label="Compare", menu=compare_menu)
 
+        # Graph menu
+        graph_menu = tk.Menu(menu_bar, tearoff=0)
+        graph_menu.add_command(label="Graph Current Session", command=self.graph_current_session)
+        menu_bar.add_cascade(label="Graph", menu=graph_menu)
+
         self.root.config(menu=menu_bar)
         
     def bind(self, cmd, fn):
@@ -40,6 +45,8 @@ class menuView:
             self._combine_sessions = fn
         elif cmd == "compare":
             self._compare_sessions = fn
+        elif cmd == "graph":
+            self._graph_current_session = fn
     
     def new_session(self):
         if self._new_session is not None and callable(self._new_session):
@@ -60,4 +67,8 @@ class menuView:
     def compare_sessions(self):
         if self._compare_sessions is not None and callable(self._compare_sessions):
             self._compare_sessions()
+
+    def graph_current_session(self):
+        if self._graph_current_session is not None and callable(self._graph_current_session):
+            self._graph_current_session()
         

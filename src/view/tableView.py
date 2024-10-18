@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from model.sessionModel import sessionModel
 
 class tableView:
     def __init__(self, root, data):
@@ -75,9 +76,9 @@ class tableView:
             ))
             return
 
-        total_count = sum(item['count'] for item in self.data)
-        missed_count = sum(item['missed'] for item in self.data)
-        total_seen = sum(item['count'] + item.get('missed', 0) for item in self.data)
+        total_count = sessionModel.calculate_total_caught_from(self.data)
+        missed_count = sessionModel.calculate_total_missed_from(self.data)
+        total_seen = sessionModel.calculate_total_seen_from(self.data)
         for fish in self.data:
             if self.hide_zero_catches_var.get() and fish['count'] == 0 and fish.get('missed', 0) == 0:
                 continue  # Skip rows with 0 catches if the checkbox is checked
@@ -132,8 +133,8 @@ class tableView:
             return fish[col.lower()]  # Assuming other columns use the key directly
     
     def sort_column(self, col):
-        total_count = sum(item['count'] for item in self.data)
-        total_seen = sum(f['count'] + f.get('missed', 0) for f in self.data)
+        total_count = sessionModel.calculate_total_caught_from(self.data)
+        total_seen = sessionModel.calculate_total_seen_from(self.data)
         if col in self.sort_order:
             k = col.lower()
             
