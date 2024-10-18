@@ -32,13 +32,13 @@ class tableView:
         self.tree.heading("Seen Percentage", text="See Rate", command=lambda: self.sort_column("Seen Percentage"))
         self.tree.grid(row=1, pady=(10, 30), padx=(10, 10))
         
-        self.tree.column("Name", width=75)  # Adjust width as needed
-        self.tree.column("Count", width=50)
-        self.tree.column("Missed", width=50)
-        self.tree.column("Percentage", width=75)
-        self.tree.column("Number Seen", width=50)
-        self.tree.column("Catch Percentage", width=75)
-        self.tree.column("Seen Percentage", width=65)
+        self.tree.column("Name", width=100, anchor="center")  # Adjust width as needed
+        self.tree.column("Count", width=65, anchor="center")
+        self.tree.column("Missed", width=65, anchor="center")
+        self.tree.column("Percentage", width=90, anchor="center")
+        self.tree.column("Number Seen", width=65, anchor="center")
+        self.tree.column("Catch Percentage", width=90, anchor="center")
+        self.tree.column("Seen Percentage", width=65, anchor="center")
         
         
         self.sort_order = {
@@ -62,7 +62,7 @@ class tableView:
             self.data = new_data
         # Clear the tree
         self.tree.delete(*self.tree.get_children())
-        blank_sep = "-----"
+        blank_sep = "------"
         if not self.data:
             self.tree.insert("", "end", values=(
                 "Total",
@@ -100,6 +100,8 @@ class tableView:
             ))
 
         # Add Total row at the bottom
+        # Calculate the total catch percentage
+        total_catch_percentage = (total_count / total_seen * 100) if total_seen > 0 else 0
         
         self.tree.insert("", "end", values=(
             "Total",
@@ -107,7 +109,7 @@ class tableView:
             blank_sep,
             missed_count,
             total_count + missed_count,
-            blank_sep,
+            f"{total_catch_percentage:.2f}%",
             blank_sep
         ))
         

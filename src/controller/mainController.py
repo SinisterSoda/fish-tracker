@@ -170,10 +170,12 @@ class MainController:
         selected_item = self.rootView.table.selection()
         if not selected_item:
             return
-        print("edit fish")
-        print(selected_item)
         if self.edit_window is not None:
             messagebox.showwarning("Already Editing", "You are already editing a fish.")
+            return
+        
+        # Check if this is the last selection in the table
+        if selected_item[0] == self.rootView.table.tree.get_children()[-1]:
             return
 
         item = self.rootView.table.item(selected_item)
@@ -188,6 +190,12 @@ class MainController:
         self.edit_window.title("Edit Fish")
         # Position the edit window at the mouse position
         self.edit_window.geometry(f"+{mouse_x}+{mouse_y}")
+
+        def on_window_close():
+            self.edit_window.destroy()
+            self.edit_window = None
+
+        self.edit_window.protocol("WM_DELETE_WINDOW", on_window_close)
 
         # Create UI elements in the order they appear
         tk.Label(self.edit_window, text="Fish Name").grid(row=0, column=0, padx=5, pady=5, sticky="w")
@@ -228,6 +236,7 @@ class MainController:
                     })
                     self.rootView.update_data(self.session_data)
                     self.edit_window.destroy()
+                    self.edit_window = None
                 else:
                     messagebox.showwarning("Input Error", "Please enter a valid fish name and count.")
             except ValueError:
@@ -236,11 +245,7 @@ class MainController:
         save_button = tk.Button(self.edit_window, text="Save Changes", command=save_changes)
         save_button.grid(row=3, column=0, columnspan=2, pady=10)
 
-        def on_window_close():
-            self.edit_window.destroy()
-            self.edit_window = None
-
-        self.edit_window.protocol("WM_DELETE_WINDOW", on_window_close)
+        
 
         # Focus the count entry field
         fish_count_entry.focus_set()
