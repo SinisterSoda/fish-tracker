@@ -45,6 +45,15 @@ class sessionModel:
         
     def update_at(self, index, f):
         self.fish_data[index] = f
+
+    def calculate_total_caught(self):
+        return sum(fish['count'] for fish in self.fish_data)
+
+    def calculate_total_missed(self):
+        return sum(fish.get('missed', 0) for fish in self.fish_data)
+
+    def calculate_total_seen(self):
+        return self.calculate_total_caught() + self.calculate_total_missed()
         
     @staticmethod
     def load_session():
@@ -83,3 +92,15 @@ class sessionModel:
         # Convert the combined data back to a list
         fd = list(combined_fish_data.values())
         return sessionModel(fd, wt, bt)
+    
+    @staticmethod
+    def calculate_total_caught_from(fish_data):
+        return sum(fish['count'] for fish in fish_data)
+
+    @staticmethod
+    def calculate_total_missed_from(fish_data):
+        return sum(fish.get('missed', 0) for fish in fish_data)
+
+    @staticmethod
+    def calculate_total_seen_from(fish_data):
+        return sum(fish['count'] + fish.get('missed', 0) for fish in fish_data)

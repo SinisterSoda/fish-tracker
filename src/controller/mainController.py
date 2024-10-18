@@ -9,6 +9,7 @@ import time
 from view.rootView import rootView
 from model.sessionModel import sessionModel
 from view.compareView import compareView
+from view.graphView import GraphView
 
 class MainController: 
     def __init__(self):
@@ -29,6 +30,7 @@ class MainController:
         self.rootView.bind_menu("load", self.load_session)
         self.rootView.bind_menu("combine", self.combine_sessions)
         self.rootView.bind_menu("compare", self.compare_sessions)
+        self.rootView.bind_menu("graph", self.graph_current_session)
         
         #self.rootView.table.bind("<Double-1>", self.edit_fish)
         self.last_click_time = 0
@@ -259,6 +261,28 @@ class MainController:
             return
 
         self.compare_table = compareView(self.rootView.root, file_paths)
+
+    def graph_current_session(self):
+        if self.session_data.is_empty():
+            messagebox.showwarning("Empty Session", "There is no data to graph.")
+            return
+
+        graph_data = []
+        for fish in self.session_data.fish_data:
+            total_count = self.session_data.calculate_total_caught()
+            total_seen = self.session_data.calculate_total_seen()
+            number_seen = fish['count'] + fish.get('missed', 0)
+            graph_data.append({
+                'name': fish['name'],
+                'count': fish['count'],
+                'missed': fish.get('missed', 0),
+                'percentage': f"{(fish['count'] / total_count * 100):.2f}%",
+                'number_seen': number_seen,
+                'catch_percentage': f"{(fish['count'] / number_seen * 100):.2f}%" if number_seen > 0 else "0.00%",
+                'seen_percentage': f"{(number_seen / total_seen * 100):.2f}%" if total_seen > 0 else "0.00%"
+            })
+
+        GraphView(self.rootView.root, graph_data)
 
     
             
