@@ -3,6 +3,9 @@ import tkinter as tk
 import json
 import os
 
+from functools import partial
+import time
+
 from view.rootView import rootView
 from model.sessionModel import sessionModel
 from view.compareView import compareView
@@ -27,7 +30,12 @@ class MainController:
         self.rootView.bind_menu("combine", self.combine_sessions)
         self.rootView.bind_menu("compare", self.compare_sessions)
         
-        self.rootView.table.bind("<Double-1>", self.edit_fish)
+        #self.rootView.table.bind("<Double-1>", self.edit_fish)
+        self.last_click_time = 0
+        self.is_double_click = False
+        self.rootView.table.bind("<ButtonRelease-1>", self.on_click)
+
+        self.edit_window = None
         
     
         self.ensure_sessions_folder()
@@ -48,7 +56,21 @@ class MainController:
         self.session_data.clear()
         self.rootView.update_data(self.session_data)  # Refresh the tree view
 
-    def add_fish(self):#needs fixing
+    def on_click(self, event):
+        current_time = time.time()
+        if current_time - self.last_click_time < 0.4:  # 400 ms threshold for double-click
+            if not self.is_double_click:
+                self.is_double_click = True
+                self.rootView.root.after(10, self.perform_edit, event)
+        else:
+            self.is_double_click = False
+        self.last_click_time = current_time
+
+    def perform_edit(self, event):
+        self.edit_fish(event)
+        self.is_double_click = False
+
+    def add_fish(self, event):
         fish_name = self.rootView.get_fish_name().strip()
         index_check = self.session_data.fish_index(fish_name)
         if index_check >= 0:
@@ -144,33 +166,46 @@ class MainController:
         return [{'name': fish['name'], 'count': fish['count'], 'missed': fish['missed']} for fish in fish_count_dict.values()]
     
     def edit_fish(self, event):
+        
         selected_item = self.rootView.table.selection()
         if not selected_item:
+            return
+        print("edit fish")
+        print(selected_item)
+        if self.edit_window is not None:
+            messagebox.showwarning("Already Editing", "You are already editing a fish.")
             return
 
         item = self.rootView.table.item(selected_item)
         fish_name, fish_count, _, missed_count = item['values'][:4]
 
+        # Get the current mouse position
+        mouse_x = self.rootView.root.winfo_pointerx()
+        mouse_y = self.rootView.root.winfo_pointery()
+
         # Create edit pop-up
-        edit_window = tk.Toplevel(self.rootView.root)
-        edit_window.title("Edit Fish")
+        self.edit_window = tk.Toplevel(self.rootView.root)
+        self.edit_window.title("Edit Fish")
+        # Position the edit window at the mouse position
+        self.edit_window.geometry(f"+{mouse_x}+{mouse_y}")
 
         # Create UI elements in the order they appear
-        tk.Label(edit_window, text="Fish Name").grid(row=0, column=0, padx=5, pady=5, sticky="w")
-        fish_name_entry = tk.Entry(edit_window, width=20)
+        tk.Label(self.edit_window, text="Fish Name").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        fish_name_entry = tk.Entry(self.edit_window, width=20)
         fish_name_entry.grid(row=0, column=1, padx=5, pady=5)
         fish_name_entry.insert(0, fish_name)
 
-        tk.Label(edit_window, text="Count").grid(row=1, column=0, padx=5, pady=5, sticky="w")
-        fish_count_entry = tk.Entry(edit_window, width=10)
+        tk.Label(self.edit_window, text="Count").grid(row=1, column=0, padx=5, pady=5, sticky="w")
+        fish_count_entry = tk.Entry(self.edit_window, width=10)
         fish_count_entry.grid(row=1, column=1, padx=5, pady=5)
         fish_count_entry.insert(0, fish_count)
         
         # New Entry for Missed Count
-        tk.Label(edit_window, text="Missed").grid(row=2, column=0, padx=5, pady=5, sticky="w")
-        missed_count_entry = tk.Entry(edit_window, width=10)
+        tk.Label(self.edit_window, text="Missed").grid(row=2, column=0, padx=5, pady=5, sticky="w")
+        missed_count_entry = tk.Entry(self.edit_window, width=10)
         missed_count_entry.grid(row=2, column=1, padx=5, pady=5)
         missed_count_entry.insert(0, missed_count)  # Set the current missed count
+
 
         def save_changes():
             new_fish_name = fish_name_entry.get().strip()
@@ -192,14 +227,23 @@ class MainController:
                         "missed": new_missed_count
                     })
                     self.rootView.update_data(self.session_data)
-                    edit_window.destroy()
+                    self.edit_window.destroy()
                 else:
                     messagebox.showwarning("Input Error", "Please enter a valid fish name and count.")
             except ValueError:
                 messagebox.showwarning("Input Error", "Count and missed must be a valid integer.")
 
-        save_button = tk.Button(edit_window, text="Save Changes", command=save_changes)
+        save_button = tk.Button(self.edit_window, text="Save Changes", command=save_changes)
         save_button.grid(row=3, column=0, columnspan=2, pady=10)
+
+        def on_window_close():
+            self.edit_window.destroy()
+            self.edit_window = None
+
+        self.edit_window.protocol("WM_DELETE_WINDOW", on_window_close)
+
+        # Focus the count entry field
+        fish_count_entry.focus_set()
         
         
     def compare_sessions(self):

@@ -68,5 +68,18 @@ class sessionModel:
         # Ensure each fish has a 'missed' value
         for fish in fd:
             if 'missed' not in fish:
-                fish['missed'] = 0  
+                fish['missed'] = 0
+        
+        # Combine fish entries with the same name
+        combined_fish_data = {}
+        for fish in fd:
+            name = fish['name']
+            if name in combined_fish_data:
+                combined_fish_data[name]['count'] += fish['count']
+                combined_fish_data[name]['missed'] += fish['missed']
+            else:
+                combined_fish_data[name] = fish.copy()
+        
+        # Convert the combined data back to a list
+        fd = list(combined_fish_data.values())
         return sessionModel(fd, wt, bt)

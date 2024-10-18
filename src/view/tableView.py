@@ -51,8 +51,6 @@ class tableView:
             "Seen Percentage": True
         }
         
-        self.bind("<Double-1>", self.sort_column)
-        
         self.update_tree()
         
     def bind(self, cmd, fn):
