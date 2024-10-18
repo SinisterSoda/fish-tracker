@@ -13,7 +13,7 @@ class tableView:
         self.hide_zero_catches_var = tk.BooleanVar(value=False)
         self.hide_zero_catches_checkbox = tk.Checkbutton(
             self.frame,
-            text="Hide rows with 0 catches",
+            text="Hide rows with 0 seen",
             variable=self.hide_zero_catches_var,
             command=self.update_tree
         )
@@ -79,7 +79,7 @@ class tableView:
         missed_count = sum(item['missed'] for item in self.data)
         total_seen = sum(item['count'] + item.get('missed', 0) for item in self.data)
         for fish in self.data:
-            if self.hide_zero_catches_var.get() and fish['count'] == 0:
+            if self.hide_zero_catches_var.get() and fish['count'] == 0 and fish.get('missed', 0) == 0:
                 continue  # Skip rows with 0 catches if the checkbox is checked
             
             percentage = (fish['count'] / total_count) * 100 if total_count > 0 else 0
