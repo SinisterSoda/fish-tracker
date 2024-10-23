@@ -39,9 +39,23 @@ class MainController:
 
         self.edit_window = None
         
+        self.graphView = None
+        
+        self.rootView.bind("<Destroy>", self.kill_children)
+        
     
         self.ensure_sessions_folder()
         self.rootView.mainloop()
+        
+    def kill_children(self, event=None):
+        if self.graphView is not None:
+            self.graphView.destroy()
+            self.graphView = None
+        if self.edit_window is not None:  # Destroy edit window if open
+            self.edit_window.destroy()
+            self.edit_window = None
+        
+        self.rootView = None
         
         
         
@@ -276,13 +290,15 @@ class MainController:
                 'name': fish['name'],
                 'count': fish['count'],
                 'missed': fish.get('missed', 0),
-                'percentage': f"{(fish['count'] / total_count * 100):.2f}%",
+                'percentage': f"{(fish['count'] / total_count * 100):.2f}%" if total_count > 0 else "0.00%",
                 'number_seen': number_seen,
                 'catch_percentage': f"{(fish['count'] / number_seen * 100):.2f}%" if number_seen > 0 else "0.00%",
                 'seen_percentage': f"{(number_seen / total_seen * 100):.2f}%" if total_seen > 0 else "0.00%"
             })
-
-        GraphView(self.rootView.root, graph_data)
+        if self.graphView is not None:
+            self.graphView.destroy()
+        self.graphView = GraphView(self.rootView.root, graph_data)
+        
 
     
             

@@ -19,6 +19,10 @@ class rootView:
         self._on_bait_change = None
         self._on_water_change = None
         
+        self._on_destroyed = None
+        
+        self.root.bind("<Destroy>", self.on_self_destroy)
+        
         self.create_widgets()
         self.create_menu()
     
@@ -97,6 +101,8 @@ class rootView:
             self._on_bait_change = fn
         elif cmd == "water_change":
             self._on_water_change = fn
+        elif cmd == "<Destroy>":
+            self._on_destroyed = fn
 
         
         
@@ -136,6 +142,15 @@ class rootView:
     def add_fish(self):
         if self._add_fish is not None and callable(self._add_fish):
             self._add_fish()
+            
+    def on_self_destroy(self, *args):
+        #do my own stuff
+
+        
+        if self._on_destroyed is not None and callable(self._on_destroyed):
+            self._on_destroyed(*args)
+        
+        
         
     
         

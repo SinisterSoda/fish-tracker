@@ -12,6 +12,8 @@ class GraphView:
         self.window = tk.Toplevel(self.root)
         self.window.title("Session Graph")
         self.window.geometry("800x600")
+        
+        self.window.protocol("WM_DELETE_WINDOW", self.destroy)
 
         self.create_widgets()
 
@@ -39,6 +41,9 @@ class GraphView:
         ax.set_title(f"{title} Graph")
         ax.set_xlabel("Fish")
         ax.set_ylabel(title)
+        
+        # Set y-axis limits to start from 0
+        ax.set_ylim(bottom=0)
         
         # Adjust x-axis labels
         ax.set_xticklabels(names, rotation=0, ha='center')
@@ -78,6 +83,7 @@ class GraphView:
         canvas = FigureCanvasTkAgg(fig, master=frame)
         canvas.draw()
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        
 
     def get_attribute_value(self, fish, attribute):
         if attribute == "count":
@@ -94,3 +100,14 @@ class GraphView:
             return float(fish['seen_percentage'].strip('%'))
         else:
             return 0
+        
+    def destroy(self):
+        if self.window:
+            self.window.destroy()
+            self.window = None
+        if self.notebook:
+            self.notebook.destroy()
+            self.notebook = None
+        if self.root:
+            self.root.quit()
+            self.root = None

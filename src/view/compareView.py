@@ -14,6 +14,10 @@ class compareView:
         for index, file_path in enumerate(file_paths):
             session_data = sessionModel.load_file(file_path)
             self.create_compare_table(session_data, file_path, index)
+            
+    def destroy(self):
+        if self.compare_window:
+            self.compare_window.destroy()
     
     
     def create_compare_table(self, session_data: sessionModel, file_path, index):
