@@ -101,13 +101,13 @@ class GraphView:
         else:
             return 0
         
-    def destroy(self):
+    def destroy(self, mainQuit = True):
         if self.window:
             self.window.destroy()
             self.window = None
         if self.notebook:
             self.notebook.destroy()
             self.notebook = None
-        if self.root:
+        if self.root and mainQuit:
             self.root.quit()
             self.root = None

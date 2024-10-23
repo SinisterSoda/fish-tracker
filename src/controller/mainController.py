@@ -296,7 +296,7 @@ class MainController:
                 'seen_percentage': f"{(number_seen / total_seen * 100):.2f}%" if total_seen > 0 else "0.00%"
             })
         if self.graphView is not None:
-            self.graphView.destroy()
+            self.graphView.destroy(False)
         self.graphView = GraphView(self.rootView.root, graph_data)
         
 
