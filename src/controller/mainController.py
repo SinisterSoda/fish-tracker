@@ -41,11 +41,17 @@ class MainController:
         
         self.graphView = None
         
-        self.rootView.bind("<Destroy>", self.kill_children)
+        self.rootView.bind("<Destroy>", self.kill)
         
     
         self.ensure_sessions_folder()
         self.rootView.mainloop()
+        
+    def kill(self, *args):
+        self.kill_children(args)
+        if self.rootView:
+            self.rootView.quit()
+            self.rootView = None
         
     def kill_children(self, event=None):
         if self.graphView is not None:
@@ -55,7 +61,7 @@ class MainController:
             self.edit_window.destroy()
             self.edit_window = None
         
-        self.rootView = None
+        
         
         
         
@@ -296,7 +302,7 @@ class MainController:
                 'seen_percentage': f"{(number_seen / total_seen * 100):.2f}%" if total_seen > 0 else "0.00%"
             })
         if self.graphView is not None:
-            self.graphView.destroy(False)
+            self.graphView.destroy()
         self.graphView = GraphView(self.rootView.root, graph_data)
         
 

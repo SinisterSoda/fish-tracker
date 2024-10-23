@@ -143,6 +143,9 @@ class rootView:
         if self._add_fish is not None and callable(self._add_fish):
             self._add_fish()
             
+    def quit(self):
+        self.root.quit()
+            
     def on_self_destroy(self, *args):
         #do my own stuff
 
