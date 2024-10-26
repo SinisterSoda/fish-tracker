@@ -92,7 +92,7 @@ class MainController:
         self.edit_fish(event)
         self.is_double_click = False
 
-    def add_fish(self, event):
+    def add_fish(self):
         fish_name = self.rootView.get_fish_name().strip()
         index_check = self.session_data.fish_index(fish_name)
         if index_check >= 0:
