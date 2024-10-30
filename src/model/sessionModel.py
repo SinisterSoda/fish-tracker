@@ -54,6 +54,12 @@ class sessionModel:
 
     def calculate_total_seen(self):
         return self.calculate_total_caught() + self.calculate_total_missed()
+    
+    def delete_at(self, index):
+        if 0 <= index < len(self.fish_data):
+            del self.fish_data[index]
+        else:
+            raise IndexError("Index out of range for deleting fish entry.")
         
     @staticmethod
     def load_session():

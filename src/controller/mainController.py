@@ -263,11 +263,21 @@ class MainController:
                     messagebox.showwarning("Input Error", "Please enter a valid fish name and count.")
             except ValueError:
                 messagebox.showwarning("Input Error", "Count and missed must be a valid integer.")
+                
+        def delete_fish():
+            if messagebox.askyesno("Delete Fish", f"Are you sure you want to delete '{fish_name}'?"):
+                index = self.session_data.fish_index(fish_name)
+                if index >= 0:
+                    self.session_data.delete_at(index)  # Delete the fish from session data
+                    self.rootView.update_data(self.session_data)
+                    self.edit_window.destroy()
+                    self.edit_window = None
 
         save_button = tk.Button(self.edit_window, text="Save Changes", command=save_changes)
-        save_button.grid(row=3, column=0, columnspan=2, pady=10)
+        save_button.grid(row=3, column=0, padx=5, pady=10)
 
-        
+        delete_button = tk.Button(self.edit_window, text="Delete", command=delete_fish, fg="red")
+        delete_button.grid(row=3, column=1, padx=5, pady=10)
 
         # Focus the count entry field
         fish_count_entry.focus_set()
