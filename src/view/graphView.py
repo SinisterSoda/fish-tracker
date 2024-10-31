@@ -11,22 +11,68 @@ class GraphView:
         self.data = data
         self.window = tk.Toplevel(self.root)
         self.window.title("Session Graph")
-        self.window.geometry("800x600")
+        self.window.geometry("900x750")
+
+        # Add sort order tracking
+        self.current_sort = None
+        self.reverse_sort = False
         
         self.window.protocol("WM_DELETE_WINDOW", self.destroy)
 
         self.create_widgets()
 
     def create_widgets(self):
+
+        sort_frame = tk.Frame(self.window)
+        sort_frame.pack(fill=tk.X)
+
+        # Add sort buttons
+        sort_options = [
+            ("Count", "count"),
+            ("Missed", "missed"),
+            ("Percentage", "percentage"),
+            ("Number Seen", "number_seen"),
+            ("Catch %", "catch_percentage"),
+            ("Seen %", "seen_percentage")
+        ]
+
+        for label, attr in sort_options:
+            btn = tk.Button(sort_frame, text=f"Sort by {label}",
+                          command=lambda a=attr: self.sort_and_refresh(a))
+            btn.pack(side=tk.LEFT, padx=2)
+
         self.notebook = tk.ttk.Notebook(self.window)
         self.notebook.pack(fill=tk.BOTH, expand=True)
 
+        self.create_graphs()
+
+    def create_graphs(self):
+        # Move graph creation code here to avoid duplication
         self.create_graph("Count", "count")
         self.create_graph("Missed", "missed")
         self.create_graph("Percentage", "percentage", bar_label_affix="%")
         self.create_graph("Number Seen", "number_seen")
         self.create_graph("Catch Percentage", "catch_percentage", bar_label_affix="%")
         self.create_graph("Seen Percentage", "seen_percentage", bar_label_affix="%")
+
+    def sort_and_refresh(self, attribute):
+        # Toggle sort direction if clicking same attribute
+        if self.current_sort == attribute:
+            self.reverse_sort = not self.reverse_sort
+        else:
+            self.current_sort = attribute
+            self.reverse_sort = False
+            
+        # Sort the data
+        self.data.sort(
+            key=lambda x: self.get_attribute_value(x, attribute),
+            reverse=self.reverse_sort
+        )
+        
+        # Clear and recreate graphs
+        for widget in self.notebook.winfo_children():
+            widget.destroy()
+        self.create_graphs()
 
     def create_graph(self, title, attribute, max_label_length=10, bottom_margin=0.2, bar_label_affix=""):
         frame = tk.Frame(self.notebook)
