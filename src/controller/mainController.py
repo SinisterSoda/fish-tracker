@@ -10,6 +10,7 @@ from view.rootView import rootView
 from model.sessionModel import sessionModel
 from view.compareView import compareView
 from view.graphView import GraphView
+from view.editView import EditView
 
 class MainController: 
     def __init__(self):
@@ -187,13 +188,62 @@ class MainController:
                 fish_count_dict[name] = {'name': name, 'count': count, 'missed': missed}
         return [{'name': fish['name'], 'count': fish['count'], 'missed': fish['missed']} for fish in fish_count_dict.values()]
     
-    def edit_fish(self, event):
+
+    def save_edit_changes(self):
+        if not self.edit_window:
+            return
+
+        fish_name = self.edit_window.original_fish_data['name']
+        values = self.edit_window.get_values()
+        new_fish_name = values['name']
+        index_check = self.session_data.fish_index(new_fish_name)
+        if index_check >= 0 and fish_name != new_fish_name:
+            messagebox.showwarning("Invalid Name", "You cannot reuse a name that already exists")
+            return
+        try:
+            new_fish_count = int(values['count'])
+            new_missed_count = int(values['missed'])
+            if new_fish_name and new_fish_count >= 0 and new_missed_count >= 0:
+                index = self.session_data.fish_index(fish_name)
+                self.session_data.update_at(index, {
+                    "name": new_fish_name, 
+                    "count": new_fish_count,
+                    "missed": new_missed_count
+                })
+                self.rootView.update_data(self.session_data)
+                self.edit_window.destroy()
+                self.edit_window = None
+            else:
+                messagebox.showwarning("Input Error", "Please enter a valid fish name and count.")
+        except ValueError:
+            messagebox.showwarning("Input Error", "Count and missed must be a valid integer.")
+            
+    def delete_edit_fish(self):
+        if not self.edit_window:
+            return
         
+        fish_name = self.edit_window.original_fish_data['name']
+        if messagebox.askyesno("Delete Fish", f"Are you sure you want to delete '{fish_name}'?"):
+            index = self.session_data.fish_index(fish_name)
+            if index >= 0:
+                self.session_data.delete_at(index)
+                self.rootView.update_data(self.session_data)
+                self.edit_window.destroy()
+                self.edit_window = None
+
+    def on_edit_close(self):
+        if not self.edit_window:
+            return
+        self.edit_window = None
+
+    def edit_fish(self, event):
         selected_item = self.rootView.table.selection()
         if not selected_item:
             return
+        
         if self.edit_window is not None:
             messagebox.showwarning("Already Editing", "You are already editing a fish.")
+            self.edit_window.window.focus_force()
             return
         
         # Check if this is the last selection in the table
@@ -207,80 +257,21 @@ class MainController:
         mouse_x = self.rootView.root.winfo_pointerx()
         mouse_y = self.rootView.root.winfo_pointery()
 
+        fish_data = {
+            'name': fish_name,
+            'count': fish_count,
+            'missed': missed_count
+        }
+
         # Create edit pop-up
-        self.edit_window = tk.Toplevel(self.rootView.root)
-        self.edit_window.title("Edit Fish")
-        # Position the edit window at the mouse position
-        self.edit_window.geometry(f"+{mouse_x}+{mouse_y}")
-
-        def on_window_close():
-            self.edit_window.destroy()
-            self.edit_window = None
-
-        self.edit_window.protocol("WM_DELETE_WINDOW", on_window_close)
-
-        # Create UI elements in the order they appear
-        tk.Label(self.edit_window, text="Fish Name").grid(row=0, column=0, padx=5, pady=5, sticky="w")
-        fish_name_entry = tk.Entry(self.edit_window, width=20)
-        fish_name_entry.grid(row=0, column=1, padx=5, pady=5)
-        fish_name_entry.insert(0, fish_name)
-
-        tk.Label(self.edit_window, text="Count").grid(row=1, column=0, padx=5, pady=5, sticky="w")
-        fish_count_entry = tk.Entry(self.edit_window, width=10)
-        fish_count_entry.grid(row=1, column=1, padx=5, pady=5)
-        fish_count_entry.insert(0, fish_count)
+        from view.editView import EditView
+        self.edit_window = EditView(self.rootView.root, fish_data, mouse_x, mouse_y)
         
-        # New Entry for Missed Count
-        tk.Label(self.edit_window, text="Missed").grid(row=2, column=0, padx=5, pady=5, sticky="w")
-        missed_count_entry = tk.Entry(self.edit_window, width=10)
-        missed_count_entry.grid(row=2, column=1, padx=5, pady=5)
-        missed_count_entry.insert(0, missed_count)  # Set the current missed count
+        
 
-
-        def save_changes():
-            new_fish_name = fish_name_entry.get().strip()
-            index_check = self.session_data.fish_index(new_fish_name)
-            if index_check >= 0 and fish_name != new_fish_name:
-                messagebox.showwarning("Invalid Name", "You cannot reuse a name that already exists")
-                return
-            try:
-                new_fish_count = int(fish_count_entry.get().strip())
-                new_missed_count = int(missed_count_entry.get().strip())  # Get new missed count
-                if new_fish_name and new_fish_count >= 0 and new_missed_count >= 0:
-                    #index = self.rootView.table.index(selected_item)
-                    index = self.session_data.fish_index(fish_name)
-                    
-                    #self.fish_data[index] = {"name": new_fish_name, "count": new_fish_count}
-                    self.session_data.update_at(index, {
-                        "name": new_fish_name, 
-                        "count": new_fish_count,
-                        "missed": new_missed_count
-                    })
-                    self.rootView.update_data(self.session_data)
-                    self.edit_window.destroy()
-                    self.edit_window = None
-                else:
-                    messagebox.showwarning("Input Error", "Please enter a valid fish name and count.")
-            except ValueError:
-                messagebox.showwarning("Input Error", "Count and missed must be a valid integer.")
-                
-        def delete_fish():
-            if messagebox.askyesno("Delete Fish", f"Are you sure you want to delete '{fish_name}'?"):
-                index = self.session_data.fish_index(fish_name)
-                if index >= 0:
-                    self.session_data.delete_at(index)  # Delete the fish from session data
-                    self.rootView.update_data(self.session_data)
-                    self.edit_window.destroy()
-                    self.edit_window = None
-
-        save_button = tk.Button(self.edit_window, text="Save Changes", command=save_changes)
-        save_button.grid(row=3, column=0, padx=5, pady=10)
-
-        delete_button = tk.Button(self.edit_window, text="Delete", command=delete_fish, fg="red")
-        delete_button.grid(row=3, column=1, padx=5, pady=10)
-
-        # Focus the count entry field
-        fish_count_entry.focus_set()
+        self.edit_window.bind("save", self.save_edit_changes)
+        self.edit_window.bind("delete", self.delete_edit_fish)
+        self.edit_window.bind("close", self.on_edit_close)
         
         
     def compare_sessions(self):
