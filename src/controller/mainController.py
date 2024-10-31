@@ -32,6 +32,7 @@ class MainController:
         self.rootView.bind_menu("combine", self.combine_sessions)
         self.rootView.bind_menu("compare", self.compare_sessions)
         self.rootView.bind_menu("graph", self.graph_current_session)
+        self.rootView.bind_menu("graph_other", self.graph_other_session)
         
         #self.rootView.table.bind("<Double-1>", self.edit_fish)
         self.last_click_time = 0
@@ -41,6 +42,7 @@ class MainController:
         self.edit_window = None
         
         self.graphView = None
+        self.otherGraphViews = []  # New list for additional graph windows
         
         self.rootView.bind("<Destroy>", self.kill)
         
@@ -61,9 +63,11 @@ class MainController:
         if self.edit_window is not None:  # Destroy edit window if open
             self.edit_window.destroy()
             self.edit_window = None
-        
-        
-        
+        # Clean up other graph views
+        for graph in self.otherGraphViews:
+            if graph is not None:
+                graph.destroy()
+        self.otherGraphViews.clear()     
         
         
     def ensure_sessions_folder(self):
@@ -78,6 +82,7 @@ class MainController:
 
         self.session_data.clear()
         self.rootView.update_data(self.session_data)  # Refresh the tree view
+        self.focus_root()
 
     def on_click(self, event):
         current_time = time.time()
@@ -117,16 +122,21 @@ class MainController:
             messagebox.showwarning("Input Error", "Count and missed must be a valid integer.")
             
     
+    def focus_root(self):
+        self.rootView.root.focus_force()
              
     def save_session(self):
         self.session_data.save_session()
+        self.focus_root()
         
     def clear_inputs(self):
         self.rootView.clear_inputs()
         
     def load_session(self):
         self.session_data = sessionModel.load_session()
-        self.rootView.update_data(self.session_data)
+        if self.session_data is not None:
+            self.rootView.update_data(self.session_data)
+        self.focus_root()
         
     def on_bait_change(self, *args):
         #print(self.rootView.bait_type_var.get())
@@ -174,6 +184,7 @@ class MainController:
         
         # Update UI
         self.rootView.update_data(self.session_data)
+        self.focus_root()
         
     def aggregate_fish_data(self, fish_data):
         fish_count_dict = {}
@@ -217,6 +228,7 @@ class MainController:
                 messagebox.showwarning("Input Error", "Please enter a valid fish name and count.")
         except ValueError:
             messagebox.showwarning("Input Error", "Count and missed must be a valid integer.")
+        self.focus_root()
             
     def delete_edit_fish(self):
         if not self.edit_window:
@@ -230,11 +242,13 @@ class MainController:
                 self.rootView.update_data(self.session_data)
                 self.edit_window.destroy()
                 self.edit_window = None
+        self.focus_root()
 
     def on_edit_close(self):
         if not self.edit_window:
             return
         self.edit_window = None
+        self.focus_root()
 
     def edit_fish(self, event):
         selected_item = self.rootView.table.selection()
@@ -305,7 +319,33 @@ class MainController:
         if self.graphView is not None:
             self.graphView.destroy()
         self.graphView = GraphView(self.rootView.root, graph_data)
+
+    def graph_other_session(self):
+        #loaded_session = sessionModel.load_session()
+        file_paths = filedialog.askopenfilenames(initialdir=self.sessions_folder, filetypes=[("JSON files", "*.json")])
+        if not file_paths:
+            return
         
+        for file_path in file_paths:
+            loaded_session = sessionModel.load_file(file_path)
+            if loaded_session:
+                graph_data = []
+                for fish in loaded_session.fish_data:
+                    total_count = loaded_session.calculate_total_caught()
+                    total_seen = loaded_session.calculate_total_seen()
+                    number_seen = fish['count'] + fish.get('missed', 0)
+                    graph_data.append({
+                        'name': fish['name'],
+                        'count': fish['count'],
+                        'missed': fish.get('missed', 0),
+                        'percentage': f"{(fish['count'] / total_count * 100):.2f}%" if total_count > 0 else "0.00%",
+                        'number_seen': number_seen,
+                        'catch_percentage': f"{(fish['count'] / number_seen * 100):.2f}%" if number_seen > 0 else "0.00%",
+                        'seen_percentage': f"{(number_seen / total_seen * 100):.2f}%" if total_seen > 0 else "0.00%"
+                    })
+                new_graph = GraphView(self.rootView.root, graph_data)
+                self.otherGraphViews.append(new_graph)
+            
 
     
             

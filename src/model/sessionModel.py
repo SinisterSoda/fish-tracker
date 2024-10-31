@@ -67,7 +67,7 @@ class sessionModel:
         file_path = filedialog.askopenfilename(defaultextension=".json", initialdir=sessions_folder, 
                                                 filetypes=[("JSON files", "*.json")])
         if not file_path:
-            return
+            return None
 
         return sessionModel.load_file(file_path)
     
