@@ -67,7 +67,7 @@ class sessionModel:
         file_path = filedialog.askopenfilename(defaultextension=".json", initialdir=sessions_folder, 
                                                 filetypes=[("JSON files", "*.json")])
         if not file_path:
-            return
+            return None
 
         return sessionModel.load_file(file_path)
     
@@ -99,6 +99,50 @@ class sessionModel:
         fd = list(combined_fish_data.values())
         return sessionModel(fd, wt, bt)
     
+    def sort_data(self, col, ascending=True):
+        """Sort the fish data based on the given column."""
+        self.fish_data.sort(
+            key=lambda x: sessionModel._sort_key(
+                x, col, 
+                self.calculate_total_caught(), 
+                self.calculate_total_seen()
+            ),
+            reverse=not ascending
+        )
+    
+    @staticmethod
+    def _sort_key(fish, col, total_count, total_seen):
+        """Helper method to determine the sort key for a fish entry."""
+        if col == "Percentage":
+            return fish['count'] / total_count if total_count > 0 else 0
+        elif col == "Number Seen":
+            return fish['count'] + fish.get('missed', 0)
+        elif col == "Catch Percentage":
+            count = fish['count']
+            missed = fish.get('missed', 0)
+            number_seen = count + missed
+            return (count / number_seen * 100) if number_seen > 0 else 0
+        elif col == "Seen Percentage":
+            count = fish['count']
+            missed = fish.get('missed', 0)
+            number_seen = count + missed
+            return (number_seen / total_seen * 100) if total_seen > 0 else 0
+        else:
+            return fish[col.lower()]
+
+    @staticmethod
+    def sort_fish_data(fish_data, col, ascending=True):
+        #Static method to sort any fish data list
+        total_count = sessionModel.calculate_total_caught_from(fish_data)
+        total_seen = sessionModel.calculate_total_seen_from(fish_data)
+        
+        fish_data.sort(
+            key=lambda x: sessionModel._sort_key(x, col, total_count, total_seen),
+            reverse=not ascending
+        )
+        return fish_data
+    
+
     @staticmethod
     def calculate_total_caught_from(fish_data):
         return sum(fish['count'] for fish in fish_data)

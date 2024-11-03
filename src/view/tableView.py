@@ -114,35 +114,14 @@ class tableView:
             blank_sep
         ))
         
-    def sort_key(self, fish, col, total_count, total_seen):
-        if col == "Percentage":
-            return fish['count'] / total_count if total_count > 0 else 0
-        elif col == "Number Seen":
-            return fish['count'] + fish.get('missed', 0)
-        elif col == "Catch Percentage":
-            count = fish['count']
-            missed = fish.get('missed', 0)
-            number_seen = count + missed
-            return (count / number_seen * 100) if number_seen > 0 else 0
-        elif col == "Seen Percentage":
-            count = fish['count']
-            missed = fish.get('missed', 0)
-            number_seen = count + missed
-            return (number_seen / total_seen * 100) if total_seen > 0 else 0
-        else:
-            return fish[col.lower()]  # Assuming other columns use the key directly
-    
-    def sort_column(self, col):
-        total_count = sessionModel.calculate_total_caught_from(self.data)
-        total_seen = sessionModel.calculate_total_seen_from(self.data)
-        if col in self.sort_order:
-            k = col.lower()
-            
-            self.sort_order[col] = not self.sort_order[col]
-            ascending = self.sort_order[col]
 
-            self.data.sort(key=lambda x: self.sort_key(x, col, total_count, total_seen), reverse=not ascending)
-            self.update_tree(self.data)  # Refresh the tree view with sorted data
+    def sort_column(self, col):
+        #Sort the treeview when a column header is clicked
+        if col in self.sort_order:
+            self.sort_order[col] = not self.sort_order[col]  # Toggle sort direction
+            # Use the static sort method from sessionModel
+            sessionModel.sort_fish_data(self.data, col, self.sort_order[col])
+            self.update_tree()  # Refresh the tree view with sorted data
             
             
     def selection(self):
