@@ -14,6 +14,7 @@ class menuView:
         self._combine_sessions = None
         self._graph_current_session = None
         self._graph_other_session = None 
+        self._compare_sessions = None 
 
         self.modifier_key = "Command" if platform.system() == "Darwin" else "Ctrl"
         self.command_key = "Command" if platform.system() == "Darwin" else "Control"
@@ -48,6 +49,8 @@ class menuView:
 
         self.root.bind(f"<{self.command_key}-g>", lambda e: self.graph_current_session())
         self.root.bind(f"<{self.command_key}-G>", lambda e: self.graph_other_session())
+        
+        self.root.bind(f"<{self.command_key}-c>", lambda e: self.compare_sessions())
 
 
         
