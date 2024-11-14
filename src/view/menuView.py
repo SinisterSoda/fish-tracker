@@ -15,6 +15,8 @@ class menuView:
         self._graph_current_session = None
         self._graph_other_session = None 
         self._compare_sessions = None 
+        self._export_session = None
+        self._import_session = None
 
         self.modifier_key = "Command" if platform.system() == "Darwin" else "Ctrl"
         self.command_key = "Command" if platform.system() == "Darwin" else "Control"
@@ -24,6 +26,9 @@ class menuView:
         file_menu.add_command(label="Save Session", command=self.save_session, accelerator=f"{self.modifier_key}+S") 
         file_menu.add_command(label="Open Session", command=self.load_session, accelerator=f"{self.modifier_key}+O")
         file_menu.add_command(label="Combine Sessions", command=self.combine_sessions, accelerator=f"{self.modifier_key}+Shift+O")
+        file_menu.add_separator()
+        file_menu.add_command(label="Import from CSV", command=self.import_session, accelerator=f"{self.modifier_key}+I")
+        file_menu.add_command(label="Export to CSV", command=self.export_session, accelerator=f"{self.modifier_key}+E")
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.root.quit)
 
@@ -40,7 +45,6 @@ class menuView:
         graph_menu.add_command(label="Compare Graphs", command=self.graph_other_session, accelerator=f"{self.modifier_key}+Shift+G")
         menu_bar.add_cascade(label="Graph", menu=graph_menu)
 
-
         # Add these bindings after creating the menu
         self.root.bind(f"<{self.command_key}-n>", lambda e: self.new_session())
         self.root.bind(f"<{self.command_key}-s>", lambda e: self.save_session())
@@ -52,8 +56,11 @@ class menuView:
         
         self.root.bind(f"<{self.command_key}-c>", lambda e: self.compare_sessions())
 
+         # Add binding for export
+        self.root.bind(f"<{self.command_key}-e>", lambda e: self.export_session())
 
-        
+        # Add binding for import
+        self.root.bind(f"<{self.command_key}-i>", lambda e: self.import_session())
 
         self.root.config(menu=menu_bar)
         
@@ -72,6 +79,10 @@ class menuView:
             self._graph_current_session = fn
         elif cmd == "graph_other":  # New binding
             self._graph_other_session = fn
+        elif cmd == "export":
+            self._export_session = fn
+        elif cmd == "import":
+            self._import_session = fn
     
     def new_session(self):
         if self._new_session is not None and callable(self._new_session):
@@ -100,4 +111,12 @@ class menuView:
     def graph_other_session(self):
         if self._graph_other_session is not None and callable(self._graph_other_session):
             self._graph_other_session()
+
+    def export_session(self):
+        if self._export_session is not None and callable(self._export_session):
+            self._export_session()
+
+    def import_session(self):
+        if self._import_session is not None and callable(self._import_session):
+            self._import_session()
         

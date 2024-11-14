@@ -11,6 +11,7 @@ from model.sessionModel import sessionModel
 from view.compareView import compareView
 from view.graphView import GraphView
 from view.editView import EditView
+from view.importView import ImportView
 
 class MainController: 
     def __init__(self):
@@ -33,6 +34,8 @@ class MainController:
         self.rootView.bind_menu("compare", self.compare_sessions)
         self.rootView.bind_menu("graph", self.graph_current_session)
         self.rootView.bind_menu("graph_other", self.graph_other_session)
+        self.rootView.bind_menu("export", self.export_session)
+        self.rootView.bind_menu("import", self.import_session)
         
         #self.rootView.table.bind("<Double-1>", self.edit_fish)
         self.last_click_time = 0
@@ -46,7 +49,8 @@ class MainController:
         
         self.rootView.bind("<Destroy>", self.kill)
         
-    
+        self.import_window = None
+        
         self.ensure_sessions_folder()
         self.rootView.mainloop()
         
@@ -347,5 +351,59 @@ class MainController:
                 self.otherGraphViews.append(new_graph)
             
 
+    def export_session(self):
+        self.session_data.export_to_csv()
+        self.focus_root()
+        
+    def import_session(self):
+        print("import session")
+        file_path = filedialog.askopenfilename(
+            defaultextension=".csv",
+            initialdir=self.sessions_folder,
+            filetypes=[("CSV files", "*.csv")]
+        )
+        if not file_path:
+            return
+        
+        try:
+            headers = sessionModel.get_csv_headers(file_path)
+            self.show_import_window(file_path, headers)
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to read CSV file: {str(e)}")
+        
+    def show_import_window(self, file_path, headers):
+        if self.import_window is not None:
+            self.import_window.destroy()
+        
+        self.import_window = ImportView(self.rootView.root, headers)
+        self.import_window.bind("import", lambda: self.process_import(file_path))
+        self.import_window.bind("close", self.on_import_close)
     
+    def process_import(self, file_path):
+        if not self.import_window:
+            return
+        
+        mapping = self.import_window.get_mapping()
+        
+        # Validate mapping
+        if not all(mapping.values()):
+            messagebox.showerror("Error", "Please map all required fields")
+            return
+        
+        try:
+            fish_data = sessionModel.import_from_csv(file_path, mapping)
+            if fish_data:
+                self.session_data = sessionModel(fish_data, "Unspecified/Mixed", "Unspecified/Mixed")
+                self.rootView.update_data(self.session_data)
+                self.import_window.destroy()
+                self.import_window = None
+            else:
+                messagebox.showerror("Error", "CSV file has invalid data, or column mapping is incorrect")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to import data: {str(e)}")
+        
+    def on_import_close(self):
+        if self.import_window:
+            self.import_window = None
+        
             
