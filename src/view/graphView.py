@@ -19,6 +19,9 @@ class GraphView:
         
         self.window.protocol("WM_DELETE_WINDOW", self.destroy)
 
+        # Add tab tracking
+        self.current_tab = 0
+
         self.create_widgets()
 
     def create_widgets(self):
@@ -56,6 +59,9 @@ class GraphView:
         self.create_graph("Seen Percentage", "seen_percentage", bar_label_affix="%")
 
     def sort_and_refresh(self, attribute):
+        # Store current tab before destroying
+        self.current_tab = self.notebook.index(self.notebook.select())
+
         # Toggle sort direction if clicking same attribute
         if self.current_sort == attribute:
             self.reverse_sort = not self.reverse_sort
@@ -73,6 +79,10 @@ class GraphView:
         for widget in self.notebook.winfo_children():
             widget.destroy()
         self.create_graphs()
+
+        # Restore previously selected tab
+        self.notebook.select(self.current_tab)
+
 
     def create_graph(self, title, attribute, max_label_length=10, bottom_margin=0.2, bar_label_affix=""):
         frame = tk.Frame(self.notebook)
