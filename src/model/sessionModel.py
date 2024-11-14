@@ -85,20 +85,19 @@ class sessionModel:
             reverse=not ascending
         )
 
-    def export_to_csv(self):
-        file_path = filedialog.asksaveasfilename(
-            defaultextension=".csv",
-            initialdir=os.path.join(os.getcwd(), "sessions"),
-            filetypes=[("CSV files", "*.csv")]
-        )
-        if not file_path:
-            return
-
-        
+    def export_to_csv(self, file_path, column_names):
+        """
+        Export fish data to CSV with custom column names
+        """
+        import csv
         with open(file_path, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
-            # Write header
-            writer.writerow(['name', 'count', 'missed'])
+            # Write header with custom column names
+            writer.writerow([
+                column_names['name'],
+                column_names['count'],
+                column_names['missed']
+            ])
             # Write data
             for fish in self.fish_data:
                 writer.writerow([

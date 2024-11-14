@@ -12,6 +12,7 @@ from view.compareView import compareView
 from view.graphView import GraphView
 from view.editView import EditView
 from view.importView import ImportView
+from view.exportView import ExportView
 
 class MainController: 
     def __init__(self):
@@ -50,6 +51,7 @@ class MainController:
         self.rootView.bind("<Destroy>", self.kill)
         
         self.import_window = None
+        self.export_window = None
         
         self.ensure_sessions_folder()
         self.rootView.mainloop()
@@ -352,9 +354,46 @@ class MainController:
             
 
     def export_session(self):
-        self.session_data.export_to_csv()
-        self.focus_root()
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".csv",
+            initialdir=os.path.join(os.getcwd(), "sessions"),
+            filetypes=[("CSV files", "*.csv")]
+        )
+        if not file_path:
+            return
+
+        self.show_export_window(file_path)
         
+    def show_export_window(self, file_path):
+        if self.export_window is not None:
+            self.export_window.destroy()
+        
+        self.export_window = ExportView(self.rootView.root)
+        self.export_window.bind("export", lambda: self.process_export(file_path))
+        self.export_window.bind("close", self.on_export_close)
+    
+    def process_export(self, file_path):
+        if not self.export_window:
+            return
+            
+        column_names = self.export_window.get_column_names()
+        
+        # Validate column names
+        if not all(column_names.values()):
+            messagebox.showerror("Error", "All column names must be specified")
+            return
+            
+        try:
+            self.session_data.export_to_csv(file_path, column_names)
+            self.export_window.destroy()
+            self.export_window = None
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to export data: {str(e)}")
+        
+    def on_export_close(self):
+        if self.export_window:
+            self.export_window = None
+            
     def import_session(self):
         print("import session")
         file_path = filedialog.askopenfilename(
