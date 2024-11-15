@@ -1,5 +1,6 @@
 import json
 import os
+import csv
 from tkinter import filedialog
 
 class sessionModel:
@@ -71,6 +72,40 @@ class sessionModel:
 
         return sessionModel.load_file(file_path)
     
+    
+    
+    def sort_data(self, col, ascending=True):
+        """Sort the fish data based on the given column."""
+        self.fish_data.sort(
+            key=lambda x: sessionModel._sort_key(
+                x, col, 
+                self.calculate_total_caught(), 
+                self.calculate_total_seen()
+            ),
+            reverse=not ascending
+        )
+
+    def export_to_csv(self, file_path, column_names):
+        """
+        Export fish data to CSV with custom column names
+        """
+        import csv
+        with open(file_path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            # Write header with custom column names
+            writer.writerow([
+                column_names['name'],
+                column_names['count'],
+                column_names['missed']
+            ])
+            # Write data
+            for fish in self.fish_data:
+                writer.writerow([
+                    fish['name'],
+                    fish['count'],
+                    fish.get('missed', 0)
+                ])
+
     @staticmethod
     def load_file(file_path):
         with open(file_path, 'r') as f:
@@ -98,17 +133,6 @@ class sessionModel:
         # Convert the combined data back to a list
         fd = list(combined_fish_data.values())
         return sessionModel(fd, wt, bt)
-    
-    def sort_data(self, col, ascending=True):
-        """Sort the fish data based on the given column."""
-        self.fish_data.sort(
-            key=lambda x: sessionModel._sort_key(
-                x, col, 
-                self.calculate_total_caught(), 
-                self.calculate_total_seen()
-            ),
-            reverse=not ascending
-        )
     
     @staticmethod
     def _sort_key(fish, col, total_count, total_seen):
@@ -154,3 +178,37 @@ class sessionModel:
     @staticmethod
     def calculate_total_seen_from(fish_data):
         return sum(fish['count'] + fish.get('missed', 0) for fish in fish_data)
+
+    @staticmethod
+    def import_from_csv(file_path, column_mapping):
+        """
+        Import fish data from a CSV file using the provided column mapping
+        """
+        import csv
+        fish_data = []
+        
+        with open(file_path, 'r', newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                try:
+                    fish = {
+                        'name': row[column_mapping['name']],
+                        'count': int(row[column_mapping['count']]),
+                        'missed': int(row[column_mapping['missed']])
+                    }
+                    fish_data.append(fish)
+                except (ValueError, KeyError) as e:
+                    continue  # Skip invalid rows
+                
+        return fish_data
+
+    @staticmethod
+    def get_csv_headers(file_path):
+        """
+        Get the headers from a CSV file
+        """
+        import csv
+        with open(file_path, 'r', newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            headers = next(reader)  # Get the first row (headers)
+        return headers
