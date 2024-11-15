@@ -58,11 +58,13 @@ class rootView:
         # Fish Count Entry
         tk.Label(input_frame, text="Count").grid(row=3, column=1, padx=(5, 0), pady=(5, 0))
         self.fish_count_entry = tk.Entry(input_frame, width=5)
+        self.fish_count_entry.insert(0, "0")
         self.fish_count_entry.grid(row=4, column=1, padx=(5, 0), pady=(5, 0))
         
         # Missed Count Entry
         tk.Label(input_frame, text="Missed").grid(row=3, column=2, padx=(5, 0), pady=(5, 0))
         self.missed_count_entry = tk.Entry(input_frame, width=5)
+        self.missed_count_entry.insert(0, "0")
         self.missed_count_entry.grid(row=4, column=2, padx=(5, 0), pady=(5, 0))
 
         # Add Fish Button

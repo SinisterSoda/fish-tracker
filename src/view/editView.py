@@ -29,9 +29,19 @@ class EditView:
         self.fish_count_entry.grid(row=1, column=1, padx=5, pady=5)
         self.fish_count_entry.insert(0, fish_data['count'])
 
-        # Count adjustment buttons - smaller font and size
-        button_font = ('TkDefaultFont', 8)  # Smaller font
-        button_style = {'font': button_font, 'width': 1, 'height': 1, 'padx': 0, 'pady': 1}
+        # Count adjustment buttons - updated styling
+        button_font = ('TkDefaultFont', 8)
+        button_style = {
+            'font': button_font, 
+            'width': 1,  # Slightly wider to accommodate padding
+            'height': 1,
+            'padx': 2,   # Inner horizontal padding
+            'pady': 3,   # Inner vertical padding
+            'relief': 'raised',
+            'borderwidth': 2,
+            'border': 2,
+            'highlightthickness': 0,
+        }
         
         # Count adjustment buttons
         tk.Button(self.window, text="-5", command=lambda: self.adjust_value('count', -5), **button_style).grid(row=1, column=2, padx=2)
@@ -51,11 +61,21 @@ class EditView:
         tk.Button(self.window, text="+1", command=lambda: self.adjust_value('missed', 1), **button_style).grid(row=2, column=4, padx=2)
         tk.Button(self.window, text="+5", command=lambda: self.adjust_value('missed', 5), **button_style).grid(row=2, column=5, padx=2)
 
-        # Action buttons
-        save_button = tk.Button(self.window, text="Save Changes", command=self.on_save)
+        # Action buttons - with similar styling but slightly larger
+        action_button_style = {
+            'font': ('TkDefaultFont', 12),
+            'padx': 10,
+            'pady': 5,
+            'relief': 'raised',
+            'borderwidth': 2,
+            'border': 2,
+            'highlightthickness': 0,
+        }
+
+        save_button = tk.Button(self.window, text="Save Changes", command=self.on_save, **action_button_style)
         save_button.grid(row=3, column=0, columnspan=3, padx=5, pady=10)
 
-        delete_button = tk.Button(self.window, text="Delete", command=self.on_delete, fg="red")
+        delete_button = tk.Button(self.window, text="Delete", command=self.on_delete, fg="red", **action_button_style)
         delete_button.grid(row=3, column=3, columnspan=3, padx=5, pady=10)
 
         # Focus the count entry field
